@@ -14,7 +14,7 @@
 3. **AI 图书助手**：集成大模型 API，用户可通过自然语言查询图书库存和借阅状态。
 
 ## 🚀 AI 图书助手演示
-（这里稍后加上图片）
+![AI图书助手演示](https://gitee.com/zhangsan220122/book-management/raw/master/images/ai-assistant.png)
 
 ## 💻 如何运行
 1. 导入 `sql` 文件到 MySQL 数据库。
