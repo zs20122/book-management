@@ -4,7 +4,10 @@ import org.example.book.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-    // findAll() 方法默认返回所有数据
+
+    List<Book> findByTitleContaining(String title);
 }

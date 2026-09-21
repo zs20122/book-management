@@ -43,11 +43,13 @@ public class BorrowServiceImpl implements BorrowService {
             throw new BusinessException("库存不足，无法借阅");
         }
 
-        // 业务规则2：检查用户是否已借阅该书未归还
-        borrowRepository.findActiveBorrow(request.getBookId(), userId)
-                .ifPresent(b -> {
-                    throw new BusinessException("您已借阅该书，请先归还");
-                });
+        // 业务规则2：检查用户是否已借阅该书未归还（这里是报错修复的地方）
+        List<Borrow> existing = borrowRepository.findByUserIdAndBookIdAndStatusIn(
+                userId, request.getBookId(), List.of("PENDING", "BORROWING")
+        );
+        if (!existing.isEmpty()) {
+            throw new BusinessException("您已借阅该书，请先归还");
+        }
 
         // 业务规则3：借阅天数限制
         int days = request.getDays() == null ? 7 : request.getDays();
@@ -72,18 +74,15 @@ public class BorrowServiceImpl implements BorrowService {
         Borrow borrow = borrowRepository.findById(borrowId)
                 .orElseThrow(() -> new BusinessException("借阅记录不存在"));
 
-        // 业务规则：只有待审核状态才能审核
         if (!"PENDING".equals(borrow.getStatus())) {
             throw new BusinessException("该借阅记录已处理，无法重复审核");
         }
 
         if (approved) {
             Book book = borrow.getBook();
-            // 再次检查库存（防止并发）
             if (book.getStock() <= 0) {
                 throw new BusinessException("库存不足，审核失败");
             }
-            // 扣减库存
             book.setStock(book.getStock() - 1);
             bookRepository.save(book);
 
@@ -103,22 +102,19 @@ public class BorrowServiceImpl implements BorrowService {
         Borrow borrow = borrowRepository.findById(borrowId)
                 .orElseThrow(() -> new BusinessException("借阅记录不存在"));
 
-        // 业务规则：只能归还自己的书
         if (!borrow.getUser().getId().equals(userId)) {
             throw new BusinessException("只能归还自己借阅的图书");
         }
 
-        // 业务规则：只有借阅中状态才能归还
         if (!"BORROWING".equals(borrow.getStatus())) {
             throw new BusinessException("该图书当前状态无法归还");
         }
 
-        // 计算罚金（逾期）
         LocalDateTime now = LocalDateTime.now();
         borrow.setReturnDate(now);
         if (now.isAfter(borrow.getDueDate())) {
             long daysLate = ChronoUnit.DAYS.between(borrow.getDueDate(), now);
-            BigDecimal fine = BigDecimal.valueOf(daysLate * 0.5); // 每天0.5元
+            BigDecimal fine = BigDecimal.valueOf(daysLate * 0.5);
             borrow.setFine(fine);
         }
 
@@ -144,7 +140,6 @@ public class BorrowServiceImpl implements BorrowService {
             throw new BusinessException("只有借阅中的图书才能续借");
         }
 
-        // 续借规则：只能续借一次，延长14天
         LocalDateTime newDue = borrow.getDueDate().plusDays(14);
         if (newDue.isAfter(LocalDateTime.now().plusDays(MAX_BORROW_DAYS))) {
             throw new BusinessException("续借后总天数不能超过" + MAX_BORROW_DAYS + "天");
