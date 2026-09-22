@@ -1,0 +1,80 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+/* 容器通用样式 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 卡片样式 */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+}
+
+/* 页面标题 */
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #409EFF;
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* 表格操作按钮组 */
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 状态标签通用 */
+.status-tag {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+/* 登录/注册页面背景 */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .toolbar {
+      flex-direction: column;
+      align-items: stretch;
+  }
+  
+  .toolbar .el-input,
+  .toolbar .el-button {
+      width: 100% !important;
+  }
+}
