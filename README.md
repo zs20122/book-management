@@ -3,7 +3,7 @@
 基于 Spring Boot + Vue3 的前后端分离图书管理系统。
 
 ## 🛠️ 技术栈
-- **后端**：Java, Spring Boot, MyBatis, MySQL
+- **后端**：Java, Spring Boot, Spring Data JPA, MySQL
 - **前端**：Vue3, Vite, Element Plus, Axios
 - **工具**：IntelliJ IDEA, Git, Postman
 - **AI协同**：DeepSeek (用于代码生成、Bug调试及SQL优化)
